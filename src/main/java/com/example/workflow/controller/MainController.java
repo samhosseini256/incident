@@ -1,6 +1,6 @@
 package com.example.workflow.controller;
 
-import com.example.workflow.model.IncidentModelMy;
+import com.example.workflow.model.IncidentModel;
 import com.example.workflow.service.ProjectService;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 @RestController
 public class MainController {
 
-    record IncidentModel (
+    record IncidentModelAmir(
             String id,
             Date incidentTimestamp,
             String incidentType,
@@ -50,12 +50,12 @@ public class MainController {
     private RepositoryService repositoryService;
 
     @GetMapping("get-incidents-{processInstanceId}")
-    public List<IncidentModel> getIncidents(@PathVariable String processInstanceId){
+    public List<IncidentModelAmir> getIncidents(@PathVariable String processInstanceId){
 
 
         Incident incident = runtimeService.createIncidentQuery().processInstanceId(processInstanceId).singleResult();
 
-        Optional<IncidentModel> any = Stream.of(incident).map(in -> new IncidentModel(
+        Optional<IncidentModelAmir> any = Stream.of(incident).map(in -> new IncidentModelAmir(
                 in.getId(),
                 in.getIncidentTimestamp(),
                 in.getIncidentType(),
@@ -78,14 +78,14 @@ public class MainController {
     }
 
     @GetMapping("get-my-incidents-{processInstanceId}")
-    public List <IncidentModelMy> getMyIncidents(@PathVariable String processInstanceId){
+    public List <IncidentModel> getMyIncidents(@PathVariable String processInstanceId){
 
         List <Incident> incidents = runtimeService.createIncidentQuery().processInstanceId(processInstanceId).list();
-        List <IncidentModelMy> incidentModelMyList = new ArrayList<>();
+        List <IncidentModel> incidentModels = new ArrayList<>();
         for (Incident incident:incidents ){
-            incidentModelMyList.add(new IncidentModelMy(incident));
+            incidentModels.add(new IncidentModel(incident));
         }
-        return incidentModelMyList;
+        return incidentModels;
     }
 
 

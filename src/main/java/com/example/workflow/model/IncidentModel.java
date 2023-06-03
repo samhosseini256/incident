@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class IncidentModelMy {
+public class IncidentModel {
 
     private String id;
     private Date incidentTime;
@@ -18,7 +18,7 @@ public class IncidentModelMy {
     private String processInstanceId;
     private String incidentMessage;
 
-    public IncidentModelMy(Incident incident) {
+    public IncidentModel(Incident incident) {
         this.id = incident.getId();
         this.incidentTime = incident.getIncidentTimestamp();
         this.incidentType = incident.getIncidentType();
