@@ -4,6 +4,7 @@ import com.example.workflow.service.ProjectService;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.Incident;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.model.bpmn.Bpmn;
@@ -70,24 +71,25 @@ public class MainController {
     }
 
 
-    @GetMapping("/get-{id}")
-    public String getModel(@PathVariable String id) throws IOException {
+    @GetMapping("/get-{processInstanceId}")
+    public String getModel(@PathVariable String processInstanceId) throws IOException {
 
-        Task task = taskService.createTaskQuery().taskId("4d07d4c3-021d-11ee-8a94-7c8bca06c3f6").singleResult();
+        String processDefinitionId = runtimeService.createProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .singleResult()
+                .getProcessDefinitionId();
 
+        BpmnModelInstance bpmnModelInstance = repositoryService.getBpmnModelInstance(processDefinitionId);
 
-        BpmnModelInstance bpmnModelInstance = repositoryService.getBpmnModelInstance(id);
         Collection<FlowNode> flowNodes = bpmnModelInstance.getModelElementsByType(FlowNode.class);
-
-        List<String> activeActivityIds = runtimeService.getActiveActivityIds(task.getProcessInstanceId());
+        List<String> activeActivityIds = runtimeService.getActiveActivityIds(processInstanceId);
         for (FlowNode flowNode : flowNodes) {
             if (activeActivityIds.contains(flowNode.getId())) {
                 flowNode.setName(flowNode.getName() + " (Current)");
             }
         }
 
-        String xml = Bpmn.convertToString(bpmnModelInstance);
-        return xml;
-
+        String bpmnModelFileString = Bpmn.convertToString(bpmnModelInstance);
+        return bpmnModelFileString;
     }
 }
