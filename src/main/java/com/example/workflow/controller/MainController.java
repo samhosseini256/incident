@@ -1,12 +1,10 @@
 package com.example.workflow.controller;
 
+import com.example.workflow.model.IncidentModelMy;
 import com.example.workflow.service.ProjectService;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.TaskService;
-import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.Incident;
-import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.bpm.model.bpmn.instance.FlowNode;
@@ -16,11 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 @RestController
@@ -45,6 +39,7 @@ public class MainController {
             String annotation
     ){}
 
+
     @Autowired
     private ProjectService projectService;
 
@@ -54,20 +49,43 @@ public class MainController {
     @Autowired
     private RepositoryService repositoryService;
 
-    @Autowired
-    private TaskService taskService;
-
     @GetMapping("get-incidents-{processInstanceId}")
     public List<IncidentModel> getIncidents(@PathVariable String processInstanceId){
 
-//        repositoryService.getProcessDiagramLayout()
 
         Incident incident = runtimeService.createIncidentQuery().processInstanceId(processInstanceId).singleResult();
 
-        Optional<IncidentModel> any = Stream.of(incident).map(in -> new IncidentModel(in.getId(), in.getIncidentTimestamp(), in.getIncidentType(), in.getExecutionId(), in.getActivityId(),
-                in.getProcessInstanceId(), in.getProcessDefinitionId(), in.getCauseIncidentId(), in.getRootCauseIncidentId(), in.getConfiguration(),
-                in.getIncidentMessage(), in.getTenantId(), in.getJobDefinitionId(), in.getHistoryConfiguration(), in.getFailedActivityId(), in.getAnnotation())).findAny();
+        Optional<IncidentModel> any = Stream.of(incident).map(in -> new IncidentModel(
+                in.getId(),
+                in.getIncidentTimestamp(),
+                in.getIncidentType(),
+                in.getExecutionId(),
+                in.getActivityId(),
+                in.getProcessInstanceId(),
+                in.getProcessDefinitionId(),
+                in.getCauseIncidentId(),
+                in.getRootCauseIncidentId(),
+                in.getConfiguration(),
+                in.getIncidentMessage(),
+                in.getTenantId(),
+                in.getJobDefinitionId(),
+                in.getHistoryConfiguration(),
+                in.getFailedActivityId(),
+                in.getAnnotation())).findAny();
         return List.of(any.get());
+
+
+    }
+
+    @GetMapping("get-my-incidents-{processInstanceId}")
+    public List <IncidentModelMy> getMyIncidents(@PathVariable String processInstanceId){
+
+        List <Incident> incidents = runtimeService.createIncidentQuery().processInstanceId(processInstanceId).list();
+        List <IncidentModelMy> incidentModelMyList = new ArrayList<>();
+        for (Incident incident:incidents ){
+            incidentModelMyList.add(new IncidentModelMy(incident));
+        }
+        return incidentModelMyList;
     }
 
 

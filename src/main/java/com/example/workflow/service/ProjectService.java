@@ -26,26 +26,7 @@ public class ProjectService {
     private RepositoryService repositoryService;
 
 
-    //get running diagram
     public void getDiagram(Task task){
-
-
-        InputStream processDiagram = repositoryService.getProcessDiagram(task.getProcessDefinitionId());
-        InputStream processModel = repositoryService.getProcessModel(task.getProcessDefinitionId());
-
-
-
-//        JsonNode bpmnData = new ObjectMapper().readTree(response.body().byteStream());
-//        String bpmn20XmlString = bpmnData.get("bpmn20Xml").asText();
-//        InputStream bpmn20XMLStream = new ByteArrayInputStream(bpmn20XmlString.getBytes(StandardCharsets.UTF_8));
-
-
-//        BpmnModelInstance bpmnModelInstance = Bpmn.readModelFromStream(bpmn20XMLStream);
-
-
-
-
-
     }
 
 

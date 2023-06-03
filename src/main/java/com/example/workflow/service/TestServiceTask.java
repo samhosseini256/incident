@@ -9,7 +9,7 @@ public class TestServiceTask implements JavaDelegate {
         try {
             throw new RuntimeException();
         } catch (Exception ex) {
-            execution.createIncident("RuntimeException", "Config", ex.getMessage());
+            execution.createIncident("this is incident Type", "this isConfig", "this is message");
         }
     }
 }
